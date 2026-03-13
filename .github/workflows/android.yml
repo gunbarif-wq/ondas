@@ -35,6 +35,10 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install buildozer==1.5.0 cython
 
+      - name: Strip BOM from buildozer.spec
+        run: |
+          sed -i '1s/^\xEF\xBB\xBF//' buildozer.spec
+
       - name: Build APK
         run: |
           buildozer -v android debug
@@ -44,4 +48,5 @@ jobs:
         with:
           name: ondas-apk
           path: bin/*.apk
+
 
