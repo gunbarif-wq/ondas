@@ -1,7 +1,7 @@
-﻿[app]
+[app]
 
 # App name
-title = 온다스
+title = ondas
 package.name = ondas
 package.domain = org.ondas
 
