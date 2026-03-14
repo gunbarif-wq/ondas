@@ -28,7 +28,7 @@ jobs:
             libffi-dev libssl-dev zlib1g-dev \
             libsqlite3-dev libgdbm-dev libbz2-dev liblzma-dev \
             libreadline-dev libncurses5-dev libncursesw5-dev \
-            libgmp-dev libjpeg-dev libpng-dev libtiff5-dev libtool autoconf automake pkg-config
+            libgmp-dev libjpeg-dev libpng-dev libtiff5-dev libtool libtool-bin autoconf autoconf-archive automake pkg-config
 
       - name: Install Android SDK
         run: |
