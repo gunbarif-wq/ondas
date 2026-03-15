@@ -8,6 +8,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_SDK_ROOT: /home/runner/android-sdk
+      ANDROID_HOME: /home/runner/android-sdk
+      ANDROID_NDK_VERSION: 25.2.9519653
+      ANDROID_BUILD_TOOLS: 33.0.2
+      ANDROID_API_LEVEL: 31
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,6 +30,19 @@ jobs:
             libffi-dev libssl-dev libjpeg-dev zlib1g-dev \
             autoconf automake libtool libtool-bin m4 pkg-config
 
+      - name: Set up Android SDK/NDK
+        run: |
+          mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools"
+          curl -sSLo /tmp/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q /tmp/cmdline-tools.zip -d "${ANDROID_SDK_ROOT}/cmdline-tools"
+          mv "${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools" "${ANDROID_SDK_ROOT}/cmdline-tools/latest"
+          yes | "${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager" --sdk_root="${ANDROID_SDK_ROOT}" --licenses
+          "${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager" --sdk_root="${ANDROID_SDK_ROOT}" \
+            "platform-tools" \
+            "platforms;android-${ANDROID_API_LEVEL}" \
+            "build-tools;${ANDROID_BUILD_TOOLS}" \
+            "ndk;${ANDROID_NDK_VERSION}"
+
       - name: Install buildozer
         run: |
           python -m pip install --upgrade pip
@@ -31,6 +50,8 @@ jobs:
 
       - name: Build APK
         run: |
+          export ANDROID_NDK_HOME="${ANDROID_SDK_ROOT}/ndk/${ANDROID_NDK_VERSION}"
+          export ANDROID_NDK="${ANDROID_NDK_HOME}"
           buildozer -v android debug
 
       - name: Upload APK
