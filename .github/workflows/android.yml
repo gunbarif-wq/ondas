@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout
@@ -54,6 +54,7 @@ jobs:
 
       - name: Build APK
         run: |
+          export ACLOCAL_PATH="/usr/share/aclocal"
           buildozer -v android debug
 
       - name: Upload APK

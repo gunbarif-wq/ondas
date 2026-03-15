@@ -1,14 +1,14 @@
 [app]
 
 # App name
-title = ondas
+title = Ondas
 package.name = ondas
 package.domain = org.ondas
 
 source.dir = .
 source.include_exts = py,kv,png,jpg,jpeg,ttf
 
-version = 0.1.0
+version = 0.2.0
 
 requirements = python3,kivy
 

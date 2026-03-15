@@ -1,257 +1,241 @@
-﻿from kivy.app import App
+from kivy.app import App
 from kivy.lang import Builder
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 
 
-KV = r'''
-<CalculatorRoot>:
+KV = r"""
+<CardLabel@Label>:
+    color: 0.08, 0.08, 0.1, 1
+    font_size: "14sp"
+
+<ValueField@TextInput>:
+    multiline: False
+    input_filter: "float"
+    padding: [dp(12), dp(12)]
+    background_normal: ""
+    background_active: ""
+    background_color: 1, 1, 1, 1
+    foreground_color: 0.1, 0.1, 0.1, 1
+    cursor_color: 0.1, 0.1, 0.1, 1
+    size_hint_y: None
+    height: dp(44)
+    halign: "left"
+    valign: "middle"
+
+<ResultPill@Label>:
+    size_hint_y: None
+    height: dp(34)
+    text_size: self.size
+    halign: "center"
+    valign: "middle"
+    color: 1, 1, 1, 1
+    canvas.before:
+        Color:
+            rgba: 0.16, 0.35, 0.62, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(16)]
+
+<AppRoot>:
     orientation: "vertical"
-    padding: dp(16)
-    spacing: dp(12)
+    padding: dp(18)
+    spacing: dp(16)
+    canvas.before:
+        Color:
+            rgba: 0.96, 0.97, 0.99, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
 
-    Label:
-        text: "온다스 / 온다스ETF 계산기"
-        font_size: "20sp"
+    BoxLayout:
+        orientation: "vertical"
         size_hint_y: None
-        height: self.texture_size[1] + dp(6)
+        height: self.minimum_height
+        spacing: dp(6)
+
+        Label:
+            text: "Ondas"
+            font_size: "26sp"
+            bold: True
+            color: 0.08, 0.12, 0.2, 1
+            size_hint_y: None
+            height: self.texture_size[1] + dp(6)
+
+        Label:
+            text: "Android investment helper"
+            font_size: "13sp"
+            color: 0.4, 0.45, 0.55, 1
+            size_hint_y: None
+            height: self.texture_size[1] + dp(2)
 
     BoxLayout:
         orientation: "vertical"
-        spacing: dp(8)
+        spacing: dp(12)
+        size_hint_y: None
+        height: self.minimum_height
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [dp(18)]
 
-        Label:
-            text: "온다스"
-            bold: True
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(16)
+            spacing: dp(10)
             size_hint_y: None
-            height: self.texture_size[1] + dp(4)
+            height: self.minimum_height
 
-        GridLayout:
-            cols: 2
-            row_default_height: dp(36)
-            row_force_default: True
-            spacing: dp(6)
-
-            Label:
-                text: "가격"
-                halign: "left"
-                valign: "middle"
-                text_size: self.size
-            TextInput:
-                id: ondas_price
-                text: root.ondas_price
-                input_filter: "float"
-                multiline: False
+            CardLabel:
+                text: "Base Price"
+            ValueField:
+                id: base_price
+                text: root.base_price
                 on_text: root.on_input_change()
 
-            Label:
-                text: "고가"
-                halign: "left"
-                valign: "middle"
-                text_size: self.size
-            TextInput:
-                id: ondas_high
-                text: root.ondas_high
-                input_filter: "float"
-                multiline: False
+            CardLabel:
+                text: "Target High"
+            ValueField:
+                id: target_high
+                text: root.target_high
                 on_text: root.on_input_change()
 
-            Label:
-                text: "저가"
-                halign: "left"
-                valign: "middle"
-                text_size: self.size
-            TextInput:
-                id: ondas_low
-                text: root.ondas_low
-                input_filter: "float"
-                multiline: False
+            CardLabel:
+                text: "Target Low"
+            ValueField:
+                id: target_low
+                text: root.target_low
                 on_text: root.on_input_change()
 
-        GridLayout:
-            cols: 2
-            row_default_height: dp(30)
-            row_force_default: True
-            spacing: dp(6)
+    BoxLayout:
+        orientation: "horizontal"
+        spacing: dp(12)
+        size_hint_y: None
+        height: dp(44)
 
-            Label:
-                text: "비율(%) 고가"
-                halign: "left"
-                valign: "middle"
-                text_size: self.size
-            Label:
-                text: root.ondas_ratio_high
-                halign: "right"
-                valign: "middle"
-                text_size: self.size
-
-            Label:
-                text: "비율(%) 저가"
-                halign: "left"
-                valign: "middle"
-                text_size: self.size
-            Label:
-                text: root.ondas_ratio_low
-                halign: "right"
-                valign: "middle"
-                text_size: self.size
+        ResultPill:
+            text: root.high_ratio
+        ResultPill:
+            text: root.low_ratio
 
     BoxLayout:
         orientation: "vertical"
-        spacing: dp(8)
+        spacing: dp(12)
+        size_hint_y: None
+        height: self.minimum_height
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [dp(18)]
 
-        Label:
-            text: "온다스ETF (2배)"
-            bold: True
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(16)
+            spacing: dp(10)
             size_hint_y: None
-            height: self.texture_size[1] + dp(4)
+            height: self.minimum_height
 
-        GridLayout:
-            cols: 2
-            row_default_height: dp(36)
-            row_force_default: True
-            spacing: dp(6)
-
-            Label:
-                text: "가격"
-                halign: "left"
-                valign: "middle"
-                text_size: self.size
-            TextInput:
+            CardLabel:
+                text: "ETF Price (2x)"
+            ValueField:
                 id: etf_price
                 text: root.etf_price
-                input_filter: "float"
-                multiline: False
                 on_text: root.on_input_change()
 
-        GridLayout:
-            cols: 2
-            row_default_height: dp(30)
-            row_force_default: True
-            spacing: dp(6)
-
-            Label:
-                text: "비율(%) 고가"
-                halign: "left"
-                valign: "middle"
-                text_size: self.size
-            Label:
-                text: root.etf_ratio_high
-                halign: "right"
-                valign: "middle"
-                text_size: self.size
-
-            Label:
-                text: "비율(%) 저가"
-                halign: "left"
-                valign: "middle"
-                text_size: self.size
-            Label:
-                text: root.etf_ratio_low
-                halign: "right"
-                valign: "middle"
-                text_size: self.size
-
-            Label:
-                text: "고가"
-                halign: "left"
-                valign: "middle"
-                text_size: self.size
-            Label:
+            CardLabel:
+                text: "ETF Target High"
+            ResultPill:
                 text: root.etf_high
-                halign: "right"
-                valign: "middle"
-                text_size: self.size
-
-            Label:
-                text: "저가"
-                halign: "left"
-                valign: "middle"
-                text_size: self.size
-            Label:
+            CardLabel:
+                text: "ETF Target Low"
+            ResultPill:
                 text: root.etf_low
-                halign: "right"
-                valign: "middle"
-                text_size: self.size
 
     Label:
-        text: "입력값 변경 시 자동 계산됩니다."
-        color: 0.35, 0.35, 0.35, 1
+        text: "Values update instantly as you type."
         font_size: "12sp"
+        color: 0.4, 0.45, 0.55, 1
         size_hint_y: None
-        height: self.texture_size[1] + dp(6)
-'''
+        height: self.texture_size[1] + dp(4)
+"""
 
 
-class CalculatorRoot(BoxLayout):
-    ondas_price = StringProperty("")
-    ondas_high = StringProperty("")
-    ondas_low = StringProperty("")
-
-    ondas_ratio_high = StringProperty("-")
-    ondas_ratio_low = StringProperty("-")
-
+class AppRoot(BoxLayout):
+    base_price = StringProperty("")
+    target_high = StringProperty("")
+    target_low = StringProperty("")
     etf_price = StringProperty("")
-    etf_ratio_high = StringProperty("-")
-    etf_ratio_low = StringProperty("-")
-    etf_high = StringProperty("-")
-    etf_low = StringProperty("-")
+
+    high_ratio = StringProperty("High +0.00%")
+    low_ratio = StringProperty("Low +0.00%")
+    etf_high = StringProperty("0.00")
+    etf_low = StringProperty("0.00")
 
     def on_input_change(self):
-        price = self._parse_float(self.ondas_price)
-        high = self._parse_float(self.ondas_high)
-        low = self._parse_float(self.ondas_low)
-        etf_price = self._parse_float(self.etf_price)
+        base = self._parse_float(self.base_price)
+        high = self._parse_float(self.target_high)
+        low = self._parse_float(self.target_low)
+        etf = self._parse_float(self.etf_price)
 
-        ratio_high = None
-        ratio_low = None
+        high_ratio = self._ratio(base, high)
+        low_ratio = self._ratio(base, low)
 
-        if price is not None and high is not None and price != 0:
-            ratio_high = (high / price - 1) * 100
-        if price is not None and low is not None and price != 0:
-            ratio_low = (low / price - 1) * 100
+        self.high_ratio = self._ratio_label("High", high_ratio)
+        self.low_ratio = self._ratio_label("Low", low_ratio)
 
-        self.ondas_ratio_high = self._format(ratio_high)
-        self.ondas_ratio_low = self._format(ratio_low)
+        etf_high = self._apply_ratio(etf, high_ratio)
+        etf_low = self._apply_ratio(etf, low_ratio)
 
-        etf_ratio_high = ratio_high * 2 if ratio_high is not None else None
-        etf_ratio_low = ratio_low * 2 if ratio_low is not None else None
-
-        self.etf_ratio_high = self._format(etf_ratio_high)
-        self.etf_ratio_low = self._format(etf_ratio_low)
-
-        etf_high = None
-        etf_low = None
-        if etf_price is not None and etf_ratio_high is not None:
-            etf_high = etf_price * (1 + etf_ratio_high / 100)
-        if etf_price is not None and etf_ratio_low is not None:
-            etf_low = etf_price * (1 + etf_ratio_low / 100)
-
-        self.etf_high = self._format(etf_high)
-        self.etf_low = self._format(etf_low)
+        self.etf_high = self._format_number(etf_high)
+        self.etf_low = self._format_number(etf_low)
 
     @staticmethod
     def _parse_float(value):
-        value = (value or "").strip()
         if not value:
             return None
         try:
-            return float(value)
+            return float(value.strip())
         except ValueError:
             return None
 
     @staticmethod
-    def _format(value):
+    def _ratio(base, target):
+        if base is None or target is None or base == 0:
+            return None
+        return (target / base - 1) * 100
+
+    @staticmethod
+    def _apply_ratio(price, ratio):
+        if price is None or ratio is None:
+            return None
+        return price * (1 + ratio / 100)
+
+    @staticmethod
+    def _ratio_label(label, ratio):
+        if ratio is None:
+            return f"{label} --"
+        sign = "+" if ratio >= 0 else ""
+        return f"{label} {sign}{ratio:.2f}%"
+
+    @staticmethod
+    def _format_number(value):
         if value is None:
-            return "-"
-        return f"{value:.2f}"
+            return "--"
+        return f"{value:,.2f}"
 
 
-class CalculatorApp(App):
+class OndasApp(App):
     def build(self):
         Builder.load_string(KV)
-        return CalculatorRoot()
+        return AppRoot()
 
 
 if __name__ == "__main__":
-    CalculatorApp().run()
+    OndasApp().run()
